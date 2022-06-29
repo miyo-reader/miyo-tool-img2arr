@@ -9,12 +9,8 @@ C++ tool for converting gray scale images into a 4 bit per pixel C array.
 
 #### How-to-build
 ```bash
-mkdir build && cd build
+git clone https://github.com/miyo-reader/miyo-tool-img2arr
+cd miyo-tool-img2arr && mkdir build && cd build
 cmake ..
 make -j8
-```
-
-#### How-to-run
-```bash
-img2arr
 ```
