@@ -15,7 +15,7 @@ cmake ..
 make -j8
 ```
 
-#### How-to-build
+#### How-to-run
 ```bash
 miyo-img2arr --src miyo-spash.png --target miyo-splash.h
 ```
