@@ -44,14 +44,13 @@ using namespace boost::program_options;
 
 int main(int argc, char ** argv) try
 {
-  std::string image_src_filename, header_filename;
-
+  std::string param_src_filename, param_target_filename;
 
   options_description desc("Allowed options");
   desc.add_options()
     ("help", "Show this help message.")
-    ("src", value<std::string>(&image_src_filename)->required(), "source image file name, i.e. 'miyo-splash.png'.")
-    ("target", value<std::string>(&header_filename)->required(), "target header file name, i.e. 'miyo-splash.h'.")
+    ("src", value<std::string>(&param_src_filename)->required(), "source image file name, i.e. 'miyo-splash.png'.")
+    ("target", value<std::string>(&param_target_filename)->required(), "target header file name, i.e. 'miyo-splash.h'.")
     ;
 
   variables_map vm;
@@ -68,14 +67,14 @@ int main(int argc, char ** argv) try
   notify(vm);
 
 
-  cv::Mat const image_src = cv::imread(image_src_filename, cv::IMREAD_GRAYSCALE);
+  cv::Mat const image_src = cv::imread(param_src_filename, cv::IMREAD_GRAYSCALE);
 
   if (image_src.empty()) {
-    std::cerr << "error, could not open '" << image_src_filename << "' for reading." << std::endl;
+    std::cerr << "error, could not open '" << param_src_filename << "' for reading." << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::cout << image_src_filename << ":" << std::endl
+  std::cout << param_src_filename << ":" << std::endl
             << "  rows: " << image_src.rows << std::endl
             << "  cols: " << image_src.cols << std::endl;
 
@@ -111,10 +110,10 @@ int main(int argc, char ** argv) try
   std::cout << image_src_pixel_arr_compressed.size() << " after compression to 4 bits per pixel." << std::endl;
 
   /* Generate C header. */
-  std::ofstream header_out(header_filename);
+  std::ofstream header_out(param_target_filename);
 
   if (!header_out.good()) {
-    std::cerr << "error, could not open '" << header_filename << "' for writing." << std::endl;
+    std::cerr << "error, could not open '" << param_target_filename << "' for writing." << std::endl;
     return EXIT_FAILURE;
   }
 
