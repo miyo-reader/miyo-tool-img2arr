@@ -78,8 +78,10 @@ int main(int /* argc */, char ** /* argv */)
                   size_t const sub_pixel_shift_amount = sub_pixel_cnt * BIT_PER_PIXEL;
                   sub_pixel |= (pixel << sub_pixel_shift_amount);
 
-                  if (sub_pixel_cnt)
+                  if (sub_pixel_cnt == 0) {
                     image_src_pixel_arr_compressed.push_back(sub_pixel);
+                    sub_pixel = 0;
+                  }
 
                   sub_pixel_cnt = (sub_pixel_cnt > 0) ? (sub_pixel_cnt - 1) : (PIXEL_PER_BYTE - 1);
                 });
