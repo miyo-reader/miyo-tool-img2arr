@@ -14,3 +14,8 @@ cd miyo-tool-img2arr && mkdir build && cd build
 cmake ..
 make -j8
 ```
+
+#### How-to-build
+```bash
+miyo-img2arr --src miyo-spash.png --target miyo-splash.h
+```
