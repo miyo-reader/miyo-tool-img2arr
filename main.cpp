@@ -79,18 +79,18 @@ int main(int argc, char ** argv) try
             << "  cols: " << image.cols << std::endl;
 
   /* Read image matrix into a std::vector. */
-  std::vector<uint8_t> image_src_pixel_arr;
+  std::vector<uint8_t> image_vect;
 
   for(int i = 0; i < image.rows; i++)
     for(int j = 0; j < image.cols; j++)
-        image_src_pixel_arr.push_back(image.at<uint8_t>(i,j));
+        image_vect.push_back(image.at<uint8_t>(i,j));
 
-  std::cout << image_src_pixel_arr.size() << " pixels read." << std::endl;
+  std::cout << image_vect.size() << " pixels read." << std::endl;
 
   /* Compress colour information down to 4 bits per pixel. */
-  std::transform(image_src_pixel_arr.begin(),
-                 image_src_pixel_arr.end(),
-                 image_src_pixel_arr.begin(),
+  std::transform(image_vect.begin(),
+                 image_vect.end(),
+                 image_vect.begin(),
                  [](uint8_t const pixel) -> uint8_t
                  {
                    return (pixel / 16);
@@ -99,15 +99,15 @@ int main(int argc, char ** argv) try
   /* Compress raw pixel array vector into a
    * four bit per pixel vector.
    */
-  std::vector<uint8_t> image_src_pixel_arr_compressed;
+  std::vector<uint8_t> image_vect_compressed;
 
-  for (size_t i = 0; i < image_src_pixel_arr.size(); i+=2)
+  for (size_t i = 0; i < image_vect.size(); i+=2)
   {
-    uint8_t const sub_pixel = (image_src_pixel_arr[i] << 4) | image_src_pixel_arr[i+1];
-    image_src_pixel_arr_compressed.push_back(sub_pixel);
+    uint8_t const sub_pixel = (image_vect[i] << 4) | image_vect[i+1];
+    image_vect_compressed.push_back(sub_pixel);
   }
 
-  std::cout << image_src_pixel_arr_compressed.size() << " after compression to 4 bits per pixel." << std::endl;
+  std::cout << image_vect_compressed.size() << " after compression to 4 bits per pixel." << std::endl;
 
   /* Generate C header. */
   std::ofstream header_out(param_target_filename);
@@ -121,13 +121,13 @@ int main(int argc, char ** argv) try
              << "#define HEADER_H_" << std::endl
              << std::endl
              << "static uint8_t constexpr MIYO_SPLASH["
-             << image_src_pixel_arr_compressed.size()
+             << image_vect_compressed.size()
              << "] = " << std::endl
              << "{" << std::endl
              << "  ";
 
-  std::for_each(image_src_pixel_arr_compressed.cbegin(),
-                image_src_pixel_arr_compressed.cend(),
+  std::for_each(image_vect_compressed.cbegin(),
+                image_vect_compressed.cend(),
                 [&header_out](uint8_t const val)
                 {
                   header_out << "0x" << std::hex << static_cast<size_t>(val) << std::dec << ", ";
