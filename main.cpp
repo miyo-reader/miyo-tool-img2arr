@@ -54,9 +54,18 @@ int main(int /* argc */, char ** /* argv */)
 
   for(int i = 0; i < image_src.rows; i++)
     for(int j = 0; j < image_src.cols; j++)
-        image_src_pixel_arr.push_back(image_src.at<uint8_t>(i,j) / 16);
+        image_src_pixel_arr.push_back(image_src.at<uint8_t>(i,j));
 
   std::cout << image_src_pixel_arr.size() << " pixels read." << std::endl;
+
+  /* Compress colour information down to 4 bits per pixel. */
+  std::transform(image_src_pixel_arr.begin(),
+                 image_src_pixel_arr.end(),
+                 image_src_pixel_arr.begin(),
+                 [](uint8_t const pixel) -> uint8_t
+                 {
+                   return (pixel / 16);
+                 });
 
   /* Compress raw pixel array vector into a
    * four bit per pixel vector.
