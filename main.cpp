@@ -67,23 +67,23 @@ int main(int argc, char ** argv) try
   notify(vm);
 
 
-  cv::Mat const image_src = cv::imread(param_src_filename, cv::IMREAD_GRAYSCALE);
+  cv::Mat const image = cv::imread(param_src_filename, cv::IMREAD_GRAYSCALE);
 
-  if (image_src.empty()) {
+  if (image.empty()) {
     std::cerr << "error, could not open '" << param_src_filename << "' for reading." << std::endl;
     return EXIT_FAILURE;
   }
 
   std::cout << param_src_filename << ":" << std::endl
-            << "  rows: " << image_src.rows << std::endl
-            << "  cols: " << image_src.cols << std::endl;
+            << "  rows: " << image.rows << std::endl
+            << "  cols: " << image.cols << std::endl;
 
   /* Read image matrix into a std::vector. */
   std::vector<uint8_t> image_src_pixel_arr;
 
-  for(int i = 0; i < image_src.rows; i++)
-    for(int j = 0; j < image_src.cols; j++)
-        image_src_pixel_arr.push_back(image_src.at<uint8_t>(i,j));
+  for(int i = 0; i < image.rows; i++)
+    for(int j = 0; j < image.cols; j++)
+        image_src_pixel_arr.push_back(image.at<uint8_t>(i,j));
 
   std::cout << image_src_pixel_arr.size() << " pixels read." << std::endl;
 
