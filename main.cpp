@@ -117,10 +117,25 @@ int main(int argc, char ** argv) try
     return EXIT_FAILURE;
   }
 
-  header_out << "#ifndef HEADER_H_" << std::endl
-             << "#define HEADER_H_" << std::endl
+  std::string const base_filename              = param_src_filename.substr(param_src_filename.find_last_of("/\\") + 1);
+  std::string const base_filename_no_extension = base_filename.substr(0, base_filename.find_last_of('.'));
+
+  std::string base_filename_no_extension_uppercase(base_filename_no_extension);
+  std::transform(base_filename_no_extension_uppercase.begin(),
+                 base_filename_no_extension_uppercase.end(),
+                 base_filename_no_extension_uppercase.begin(),
+                 [](unsigned char c) -> unsigned char
+                 {
+                   if (isalpha(c))
+                     return toupper(c);
+                   else
+                     return '_';
+                 });
+
+  header_out << "#ifndef " << base_filename_no_extension_uppercase << "_H_" << std::endl
+             << "#define " << base_filename_no_extension_uppercase << "_H_" << std::endl
              << std::endl
-             << "static uint8_t constexpr MIYO_SPLASH["
+             << "static uint8_t constexpr " << base_filename_no_extension_uppercase << "["
              << image_vect_compressed.size()
              << "] = " << std::endl
              << "{" << std::endl
