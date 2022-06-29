@@ -110,9 +110,9 @@ int main(int argc, char ** argv) try
   std::cout << image_vect_compressed.size() << " after compression to 4 bits per pixel." << std::endl;
 
   /* Generate C header. */
-  std::ofstream header_out(param_target_filename);
+  std::ofstream header(param_target_filename);
 
-  if (!header_out.good()) {
+  if (!header.good()) {
     std::cerr << "error, could not open '" << param_target_filename << "' for writing." << std::endl;
     return EXIT_FAILURE;
   }
@@ -132,28 +132,28 @@ int main(int argc, char ** argv) try
                      return '_';
                  });
 
-  header_out << "#ifndef " << base_filename_no_extension_uppercase << "_H_" << std::endl
-             << "#define " << base_filename_no_extension_uppercase << "_H_" << std::endl
-             << std::endl
-             << "static uint8_t constexpr " << base_filename_no_extension_uppercase << "["
-             << image_vect_compressed.size()
-             << "] = " << std::endl
-             << "{" << std::endl
-             << "  ";
+  header << "#ifndef " << base_filename_no_extension_uppercase << "_H_" << std::endl
+         << "#define " << base_filename_no_extension_uppercase << "_H_" << std::endl
+         << std::endl
+         << "static uint8_t constexpr " << base_filename_no_extension_uppercase << "["
+         << image_vect_compressed.size()
+         << "] = " << std::endl
+         << "{" << std::endl
+         << "  ";
 
   std::for_each(image_vect_compressed.cbegin(),
                 image_vect_compressed.cend(),
-                [&header_out](uint8_t const val)
+                [&header](uint8_t const val)
                 {
-                  header_out << "0x" << std::hex << static_cast<size_t>(val) << std::dec << ", ";
+                  header << "0x" << std::hex << static_cast<size_t>(val) << std::dec << ", ";
                 });
 
-  header_out << std::endl
-             << "};" << std::endl
-             << std::endl
-             << "#endif" << std::endl;
+  header << std::endl
+         << "};" << std::endl
+         << std::endl
+         << "#endif" << std::endl;
 
-  header_out.close();
+  header.close();
 
   return EXIT_SUCCESS;
 }
