@@ -30,13 +30,43 @@
 
 #include <opencv2/opencv.hpp>
 
+#include <boost/program_options.hpp>
+
+/**************************************************************************************
+ * NAMESPACE
+ **************************************************************************************/
+
+using namespace boost::program_options;
+
 /**************************************************************************************
  * MAIN
  **************************************************************************************/
 
-int main(int /* argc */, char ** /* argv */)
+int main(int argc, char ** argv) try
 {
-  std::string const image_src_filename = "miyo-splash.png";
+  std::string image_src_filename, header_filename;
+
+
+  options_description desc("Allowed options");
+  desc.add_options()
+    ("help", "Show this help message.")
+    ("src", value<std::string>(&image_src_filename)->required(), "source image file name, i.e. 'miyo-splash.png'.")
+    ("target", value<std::string>(&header_filename)->required(), "target header file name, i.e. 'miyo-splash.h'.")
+    ;
+
+  variables_map vm;
+  store(command_line_parser(argc, argv).options(desc).run(), vm);
+
+  if (vm.count("help"))
+  {
+    std::cout << "Usage: miyo-img2arr [options]" << std::endl;
+    std::cout << "  i.e. miyo-img2arr --src miyo-spash.png --target miyo-splash.h" << std::endl;
+    std::cout << desc;
+    return EXIT_SUCCESS;
+  }
+
+  notify(vm);
+
 
   cv::Mat const image_src = cv::imread(image_src_filename, cv::IMREAD_GRAYSCALE);
 
@@ -81,7 +111,6 @@ int main(int /* argc */, char ** /* argv */)
   std::cout << image_src_pixel_arr_compressed.size() << " after compression to 4 bits per pixel." << std::endl;
 
   /* Generate C header. */
-  std::string const header_filename = "miyo-splash.h";
   std::ofstream header_out(header_filename);
 
   if (!header_out.good()) {
@@ -113,4 +142,9 @@ int main(int /* argc */, char ** /* argv */)
   header_out.close();
 
   return EXIT_SUCCESS;
+}
+catch(std::exception const & e)
+{
+  std::cerr << e.what() << std::endl;
+  return EXIT_FAILURE;
 }
