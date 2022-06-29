@@ -31,13 +31,6 @@
 #include <opencv2/opencv.hpp>
 
 /**************************************************************************************
- * CONSTANTS
- **************************************************************************************/
-
-static size_t constexpr BIT_PER_PIXEL  = 4;
-static size_t constexpr PIXEL_PER_BYTE = 8 / BIT_PER_PIXEL;
-
-/**************************************************************************************
  * MAIN
  **************************************************************************************/
 
@@ -69,22 +62,12 @@ int main(int /* argc */, char ** /* argv */)
    * four bit per pixel vector.
    */
   std::vector<uint8_t> image_src_pixel_arr_compressed;
-  uint8_t sub_pixel = 0;
-  size_t sub_pixel_cnt = (PIXEL_PER_BYTE - 1);
-  std::for_each(image_src_pixel_arr.cbegin(),
-                image_src_pixel_arr.cend(),
-                [&image_src_pixel_arr_compressed, &sub_pixel, &sub_pixel_cnt](uint8_t const pixel)
-                {
-                  size_t const sub_pixel_shift_amount = sub_pixel_cnt * BIT_PER_PIXEL;
-                  sub_pixel |= (pixel << sub_pixel_shift_amount);
 
-                  if (sub_pixel_cnt == 0) {
-                    image_src_pixel_arr_compressed.push_back(sub_pixel);
-                    sub_pixel = 0;
-                  }
-
-                  sub_pixel_cnt = (sub_pixel_cnt > 0) ? (sub_pixel_cnt - 1) : (PIXEL_PER_BYTE - 1);
-                });
+  for (size_t i = 0; i < image_src_pixel_arr.size(); i+=2)
+  {
+    uint8_t const sub_pixel = (image_src_pixel_arr[i] << 4) | image_src_pixel_arr[i+1];
+    image_src_pixel_arr_compressed.push_back(sub_pixel);
+  }
 
   std::cout << image_src_pixel_arr_compressed.size() << " after compression to 4 bits per pixel." << std::endl;
 
